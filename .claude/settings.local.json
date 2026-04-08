@@ -10,7 +10,13 @@
       "Bash(obsidian read:*)",
       "Bash(python:*)",
       "Bash(pip install:*)",
-      "Bash(git:*)"
+      "Bash(git:*)",
+      "Bash(obsidian version:*)",
+      "Bash(cat \"/c/Users/jonny/Source/repos/jay.bee/.github/workflows/\"*.yml)",
+      "Bash(obsidian unresolved:*)",
+      "Bash(obsidian links:*)",
+      "Bash(obsidian backlinks:*)",
+      "Bash(obsidian wordcount:*)"
     ]
   }
 }
