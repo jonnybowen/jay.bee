@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -m http.server 8765)",
+      "mcp__plugin_playwright_playwright__browser_type",
+      "Bash(kill %1)",
+      "Bash(obsidian vault:*)",
+      "Bash(obsidian folders:*)",
+      "Bash(obsidian files:*)",
+      "Bash(obsidian read:*)",
+      "Bash(python:*)",
+      "Bash(pip install:*)",
+      "Bash(git:*)"
+    ]
+  }
+}

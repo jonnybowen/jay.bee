@@ -1,0 +1,82 @@
+- main [ref=e2]:
+  - region "jay-bee shell" [ref=e3]:
+    - generic [ref=e4]:
+      - generic [ref=e5]:
+        - generic [ref=e10]: jay-bee — tty0
+        - generic [ref=e11]: │
+        - generic [ref=e12]: up 00:01:39
+        - generic [ref=e13]: │
+        - generic [ref=e14]: uksouth
+        - button "toggle theme" [ref=e15] [cursor=pointer]: $ theme --light
+      - generic [ref=e18]:
+        - generic [ref=e19]: jay-bee:~$
+        - textbox "shell input" [active] [ref=e20]
+    - link "scroll for projects, bio, contact" [ref=e22] [cursor=pointer]:
+      - /url: "#projects"
+      - generic [ref=e23]: projects, bio, contact
+      - generic [ref=e24]: ↓
+  - generic [ref=e25]:
+    - generic [ref=e26]:
+      - generic [ref=e27]: "01"
+      - generic [ref=e28]: projects
+      - generic [ref=e30]: most live elsewhere
+    - generic [ref=e31]:
+      - link "01 linkle new word association on a live repulsion graph. nodes drift; you link them. 2026 flutter · flame · dart" [ref=e32] [cursor=pointer]:
+        - /url: https://linkle.cool/
+        - generic [ref=e33]: "01"
+        - generic [ref=e34]:
+          - generic [ref=e35]:
+            - text: linkle
+            - generic [ref=e36]: new
+          - generic [ref=e37]: word association on a live repulsion graph. nodes drift; you link them.
+        - generic [ref=e38]: "2026"
+        - generic [ref=e39]: flutter · flame · dart
+      - generic [ref=e40]:
+        - generic [ref=e41]: "02"
+        - generic [ref=e42]:
+          - generic [ref=e43]:
+            - text: wordle leaderboard
+            - generic [ref=e44]: private
+          - generic [ref=e45]: a small members-only league for a fixed group. closed registration.
+        - generic [ref=e46]: "2024"
+        - generic [ref=e47]: .net · blazor
+      - generic [ref=e48]: — more, eventually.
+  - generic [ref=e49]:
+    - generic [ref=e50]:
+      - generic [ref=e51]: "02"
+      - generic [ref=e52]: // cat about.md
+      - generic [ref=e54]: ~/bio
+    - generic [ref=e55]:
+      - generic [ref=e56]:
+        - paragraph [ref=e57]:
+          - text: Builds things. Web apps, tools, services, the occasional game —
+          - emphasis [ref=e58]: C# and .NET
+          - text: for most of it. Yes, on purpose.
+        - paragraph [ref=e59]: Stays for the puzzle. Most experiments get scrapped; the ones that don’t end up here, eventually.
+        - paragraph [ref=e60]: Somewhere in Scotland. Mostly indoors.
+      - complementary [ref=e61]:
+        - generic [ref=e62]:
+          - generic [ref=e63]: loc
+          - generic [ref=e64]: scotland
+        - generic [ref=e65]:
+          - generic [ref=e66]: env
+          - generic [ref=e67]: c# · .net
+        - generic [ref=e68]:
+          - generic [ref=e69]: host
+          - generic [ref=e70]: azure · uksouth
+        - generic [ref=e71]:
+          - generic [ref=e72]: pace
+          - generic [ref=e73]: glacial
+    - list [ref=e75]:
+      - listitem [ref=e76]:
+        - generic [ref=e77]: github
+        - link "github.com/jonnybowen →" [ref=e78] [cursor=pointer]:
+          - /url: https://github.com/jonnybowen
+      - listitem [ref=e79]:
+        - generic [ref=e80]: bsky
+        - link "@creamchief →" [ref=e81] [cursor=pointer]:
+          - /url: https://bsky.app/profile/creamchief.bsky.social
+  - generic [ref=e82]:
+    - generic [ref=e83]: jay-bee · 2026
+    - generic [ref=e84]: azure · uksouth
+    - generic [ref=e85]: v4.06

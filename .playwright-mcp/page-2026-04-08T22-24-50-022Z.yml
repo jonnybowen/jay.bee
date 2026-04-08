@@ -1,0 +1,132 @@
+- main [ref=e2]:
+  - region "jay-bee shell" [ref=e3]:
+    - generic [ref=e4]:
+      - generic [ref=e5]:
+        - generic [ref=e10]: jay-bee — tty0
+        - generic [ref=e11]: │
+        - generic [ref=e12]: up 00:01:25
+        - generic [ref=e13]: │
+        - generic [ref=e14]: uksouth
+        - button "toggle theme" [ref=e15] [cursor=pointer]: $ theme --light
+      - generic [ref=e16]:
+        - generic [ref=e17]: $ ./boot
+        - generic [ref=e86]: "[ ok ] kernel 4.06"
+        - generic [ref=e87]: "[ ok ] mount /projects"
+        - generic [ref=e88]: "[ ok ] region uksouth"
+        - generic [ref=e89]: "[ ok ] display ready"
+        - generic [ref=e90]: "[ ok ] input tty0"
+        - generic [ref=e92]: "...vvvv)))))). /~~\\ ,,,c(((((((((((((((((/ /~~c \\. .vv)))))))))))))))))))\\`` G_G__ ,,(((KKKK//////////////' ,Z~__ '@,gW@@AKXX~MW,gmmmz==m_. iP,dW@!,A@@@@@@@@@@@@@@@A` ,W@@A\\c ]b_.__zf !P~@@@@@*P~b.~+=m@@@*~ g@Ws. ~` ,2W2m. '\\[ ['~~c'M7 _gW@@A`'s v=XX)====Y- [ [ \\c/*@@@*~ g@@i /v~ !.!. '\\c7+sg@@@@@s. // 'c'c '\\c7*X7~~~~ ]/ ~=Xm_ '~=(Gm_."
+        - generic [ref=e94]: jay-bee — small things, built quietly, somewhere in scotland.
+        - generic [ref=e95]: type help to begin · ls for projects · motd to reprint this
+        - generic [ref=e97]: "keys: / focus t theme j/k walk enter open"
+        - generic [ref=e98]: $ help
+        - generic [ref=e99]: "available:"
+        - generic [ref=e100]: help this
+        - generic [ref=e101]: ls list projects
+        - generic [ref=e102]:
+          - generic [ref=e103]: open
+          - text: open project n in a new tab
+        - generic [ref=e104]:
+          - generic [ref=e105]: cat
+          - text: print project details
+        - generic [ref=e106]: motd reprint the banner
+        - generic [ref=e107]: about scroll to about
+        - generic [ref=e108]: contact scroll to contact
+        - generic [ref=e109]: theme toggle theme
+        - generic [ref=e110]: whoami who is this
+        - generic [ref=e111]: uptime session uptime
+        - generic [ref=e112]: clear clear output
+        - generic [ref=e113]: sudo no.
+        - generic [ref=e114]: $ ls
+        - generic [ref=e115]: 1 linkle 2026 flutter · flame · dart
+        - generic [ref=e116]: 2 wordle_leaderboard 2024 .net · blazor [private]
+        - generic [ref=e117]: 2 entries.
+        - generic [ref=e118]: $ cat linkle
+        - generic [ref=e119]: linkle/
+        - generic [ref=e120]: year 2026
+        - generic [ref=e121]: stack flutter · flame · dart
+        - generic [ref=e122]: role solo + claude
+        - generic [ref=e123]: status live
+        - generic [ref=e124]:
+          - text: url
+          - link "https://linkle.cool/" [ref=e125] [cursor=pointer]:
+            - /url: https://linkle.cool/
+        - generic [ref=e126]: word association on a live repulsion graph. nodes drift; you link them.
+        - generic [ref=e127]: $ cat nope
+        - generic [ref=e128]: "cat: nope: no such file."
+        - generic [ref=e129]: $ sudo rm -rf /
+        - generic [ref=e130]: nice try.
+        - generic [ref=e131]: $ whoami
+        - generic [ref=e132]: someone in scotland. builds small things. tries to finish them.
+      - generic [ref=e18]:
+        - generic [ref=e19]: jay-bee:~$
+        - textbox "shell input" [active] [ref=e20]
+    - link "scroll for projects, bio, contact" [ref=e22] [cursor=pointer]:
+      - /url: "#projects"
+      - generic [ref=e23]: projects, bio, contact
+      - generic [ref=e24]: ↓
+  - generic [ref=e25]:
+    - generic [ref=e26]:
+      - generic [ref=e27]: "01"
+      - generic [ref=e28]: projects
+      - generic [ref=e30]: most live elsewhere
+    - generic [ref=e31]:
+      - link "01 linkle new word association on a live repulsion graph. nodes drift; you link them. 2026 flutter · flame · dart" [ref=e32] [cursor=pointer]:
+        - /url: https://linkle.cool/
+        - generic [ref=e33]: "01"
+        - generic [ref=e34]:
+          - generic [ref=e35]:
+            - text: linkle
+            - generic [ref=e36]: new
+          - generic [ref=e37]: word association on a live repulsion graph. nodes drift; you link them.
+        - generic [ref=e38]: "2026"
+        - generic [ref=e39]: flutter · flame · dart
+      - generic [ref=e40]:
+        - generic [ref=e41]: "02"
+        - generic [ref=e42]:
+          - generic [ref=e43]:
+            - text: wordle leaderboard
+            - generic [ref=e44]: private
+          - generic [ref=e45]: a small members-only league for a fixed group. closed registration.
+        - generic [ref=e46]: "2024"
+        - generic [ref=e47]: .net · blazor
+      - generic [ref=e48]: — more, eventually.
+  - generic [ref=e49]:
+    - generic [ref=e50]:
+      - generic [ref=e51]: "02"
+      - generic [ref=e52]: // cat about.md
+      - generic [ref=e54]: ~/bio
+    - generic [ref=e55]:
+      - generic [ref=e56]:
+        - paragraph [ref=e57]:
+          - text: Builds things. Web apps, tools, services, the occasional game —
+          - emphasis [ref=e58]: C# and .NET
+          - text: for most of it. Yes, on purpose.
+        - paragraph [ref=e59]: Stays for the puzzle. Most experiments get scrapped; the ones that don’t end up here, eventually.
+        - paragraph [ref=e60]: Somewhere in Scotland. Mostly indoors.
+      - complementary [ref=e61]:
+        - generic [ref=e62]:
+          - generic [ref=e63]: loc
+          - generic [ref=e64]: scotland
+        - generic [ref=e65]:
+          - generic [ref=e66]: env
+          - generic [ref=e67]: c# · .net
+        - generic [ref=e68]:
+          - generic [ref=e69]: host
+          - generic [ref=e70]: azure · uksouth
+        - generic [ref=e71]:
+          - generic [ref=e72]: pace
+          - generic [ref=e73]: glacial
+    - list [ref=e75]:
+      - listitem [ref=e76]:
+        - generic [ref=e77]: github
+        - link "github.com/jonnybowen →" [ref=e78] [cursor=pointer]:
+          - /url: https://github.com/jonnybowen
+      - listitem [ref=e79]:
+        - generic [ref=e80]: bsky
+        - link "@creamchief →" [ref=e81] [cursor=pointer]:
+          - /url: https://bsky.app/profile/creamchief.bsky.social
+  - generic [ref=e82]:
+    - generic [ref=e83]: jay-bee · 2026
+    - generic [ref=e84]: azure · uksouth
+    - generic [ref=e85]: v4.06

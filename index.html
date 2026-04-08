@@ -5,6 +5,20 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>jay-bee</title>
 <meta name="description" content="Builds things — web apps, tools, services, the occasional game. Mostly C# and .NET.">
+<link rel="canonical" href="https://jay-bee.cool/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="jay-bee">
+<meta property="og:title" content="jay-bee">
+<meta property="og:description" content="Builds things — web apps, tools, services, the occasional game. Mostly C# and .NET.">
+<meta property="og:url" content="https://jay-bee.cool/">
+<meta property="og:image" content="https://jay-bee.cool/images/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="jay-bee">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="jay-bee">
+<meta name="twitter:description" content="Builds things — web apps, tools, services, the occasional game. Mostly C# and .NET.">
+<meta name="twitter:image" content="https://jay-bee.cool/images/og.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -14,7 +28,6 @@
   :root{
     --font-sans:"Inter",-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
     --font-mono:"IBM Plex Mono",ui-monospace,monospace;
-    --font-serif:"IBM Plex Serif",Georgia,serif;
   }
 
   /* ---------- theme tokens ---------- */
@@ -620,19 +633,20 @@
   @media (max-width:860px){
     .about{grid-template-columns:1fr;gap:56px}
     .row-proj{
-      grid-template-columns:auto 1fr;
+      grid-template-columns:auto auto 1fr;
       grid-template-rows:auto auto;
       column-gap:18px;
       row-gap:10px;
       padding:24px 4px;
     }
     .row-proj .idx{grid-column:1;grid-row:1}
-    .row-proj .col-main{grid-column:2;grid-row:1}
+    .row-proj .col-main{grid-column:2 / span 2;grid-row:1}
     .row-proj .yr,.row-proj .tech{
-      grid-column:2;grid-row:2;
+      grid-row:2;
       padding-left:0;border-left:0;margin-left:0;min-width:0;
     }
-    .row-proj .yr{padding-right:14px;border-right:1px solid var(--rule);margin-right:14px}
+    .row-proj .yr{grid-column:2;padding-right:14px;border-right:1px solid var(--rule);margin-right:0}
+    .row-proj .tech{grid-column:3}
     footer{grid-template-columns:1fr;gap:6px}
     footer .c,footer .r{text-align:left}
     .brand-mark{margin:100px 0 40px}
@@ -1134,8 +1148,11 @@
     }
   });
 
-  // click anywhere in the term body to focus input
-  term.addEventListener("click", () => input.focus());
+  // click anywhere in the term body to focus input (but not on interactive elements)
+  term.addEventListener("click", (e) => {
+    if (e.target.closest("button, a, input")) return;
+    input.focus();
+  });
 
   // ---------- global keyboard shortcuts ----------
   let kfocus = -1;
@@ -1156,12 +1173,16 @@
       document.getElementById("shell").scrollIntoView({ behavior: "smooth", block: "center" });
       setTimeout(() => input.focus(), 300);
     } else if (e.key === "t") {
+      e.preventDefault();
       btn.click();
     } else if (e.key === "j") {
+      e.preventDefault();
       setKFocus(Math.min(projects.length - 1, kfocus + 1));
     } else if (e.key === "k") {
+      e.preventDefault();
       setKFocus(Math.max(0, kfocus - 1));
     } else if (e.key === "Enter" && kfocus >= 0) {
+      e.preventDefault();
       const row = projects[kfocus];
       if (row && row.tagName === "A" && row.href) {
         window.open(row.href, "_blank", "noopener");
