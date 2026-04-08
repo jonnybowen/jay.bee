@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>jay-bee // game builds</title>
-<meta name="description" content="Independent game developer. Small, strange, playable things.">
+<title>jay-bee</title>
+<meta name="description" content="Builds things — web apps, tools, services, the occasional game. Mostly C# and .NET.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -658,7 +658,7 @@
         <span class="tb-sep" aria-hidden="true">│</span>
         <span class="tb-cell tb-up">up <b id="uptime">00:00:00</b></span>
         <span class="tb-sep" aria-hidden="true">│</span>
-        <span class="tb-cell">westeurope</span>
+        <span class="tb-cell">uksouth</span>
         <span class="tb-spacer"></span>
         <button class="theme-toggle" id="themeBtn" aria-label="toggle theme">
           <span class="k">$</span>&nbsp;theme&nbsp;--<span id="themeLabel">light</span>
@@ -742,7 +742,7 @@
       <aside class="about-meta" aria-hidden="true">
         <div class="am-row"><span class="am-k">loc</span><span class="am-v">scotland</span></div>
         <div class="am-row"><span class="am-k">env</span><span class="am-v">c# &middot; .net</span></div>
-        <div class="am-row"><span class="am-k">host</span><span class="am-v">azure &middot; westeurope</span></div>
+        <div class="am-row"><span class="am-k">host</span><span class="am-v">azure &middot; uksouth</span></div>
         <div class="am-row"><span class="am-k">pace</span><span class="am-v">glacial</span></div>
       </aside>
     </div>
@@ -764,7 +764,7 @@
 
   <footer>
     <div class="l">jay-bee &middot; <span id="yr"></span></div>
-    <div class="c">azure &middot; westeurope</div>
+    <div class="c">azure &middot; uksouth</div>
     <div class="r">v4.06</div>
   </footer>
 
@@ -827,7 +827,7 @@
     { html: `<span class="dim">$</span> <span class="cmd">./boot</span>`, speed: 24 },
     { html: `[<span class="ok">  ok  </span>] kernel    <span class="dim">4.06</span>`, speed: 8 },
     { html: `[<span class="ok">  ok  </span>] mount     <span class="dim">/projects</span>`, speed: 8 },
-    { html: `[<span class="ok">  ok  </span>] region    <span class="dim">westeurope</span>`, speed: 8 },
+    { html: `[<span class="ok">  ok  </span>] region    <span class="dim">uksouth</span>`, speed: 8 },
     { html: `[<span class="ok">  ok  </span>] display   <span class="dim">ready</span>`, speed: 8 },
     { html: `[<span class="ok">  ok  </span>] input     <span class="dim">tty0</span>`, speed: 8 },
     { blank: true },
@@ -901,14 +901,21 @@
   async function revealAscii() {
     const pre = document.createElement("pre");
     pre.className = "ascii";
-    pre.textContent = ASCII_ART;
-    pre.style.opacity = "0";
-    pre.style.transition = "opacity .55s ease";
     out.appendChild(pre);
-    // allow layout, then fade in
-    await wait(20);
-    pre.style.opacity = "1";
-    if (!skipBoot) await wait(500);
+
+    if (skipBoot) {
+      pre.textContent = ASCII_ART;
+      out.scrollTop = out.scrollHeight;
+      return;
+    }
+
+    const lines = ASCII_ART.split("\n");
+    for (let i = 0; i < lines.length; i++) {
+      if (skipBoot) { pre.textContent = ASCII_ART; break; }
+      pre.textContent += (i > 0 ? "\n" : "") + lines[i];
+      out.scrollTop = out.scrollHeight;
+      await wait(55);
+    }
   }
 
   async function runBoot() {
