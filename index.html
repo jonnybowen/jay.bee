@@ -1,0 +1,1151 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>jay.bee // game builds</title>
+<meta name="description" content="Independent game developer. Small, strange, playable things.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23070b07'/%3E%3Ctext x='16' y='23' text-anchor='middle' font-family='Georgia,serif' font-weight='700' font-size='20' fill='%237dff9c'%3EJB%3C/text%3E%3Crect x='7' y='17' width='18' height='2' fill='%23ffb347'/%3E%3C/svg%3E">
+<style>
+  /* ---------- font stack ---------- */
+  :root{
+    --font-sans:"Inter",-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+    --font-mono:"IBM Plex Mono",ui-monospace,monospace;
+    --font-serif:"IBM Plex Serif",Georgia,serif;
+  }
+
+  /* ---------- theme tokens ---------- */
+  :root[data-theme="dark"]{
+    --bg: #060809;
+    --bg-2: #0b0f0e;
+    --bg-3: #101615;
+    --fg: #e8efe9;
+    --fg-dim: #7a8881;
+    --fg-faint: #2c3430;
+    --accent: #7dff9c;
+    --accent-2: #f1c27a;
+    --danger: #ff6060;
+    --rule: #1a211e;
+    --select: rgba(125,255,156,.22);
+    --grain-op: .055;
+    --scan-op: .14;
+    --vignette: inset 0 0 220px 30px rgba(0,0,0,.85);
+    --term-glow: 0 0 .02em currentColor, 0 0 .35em rgba(125,255,156,.25);
+    --body-glow: 0 0 .55em rgba(125,255,156,.06);
+  }
+  :root[data-theme="light"]{
+    --bg: #f3eee1;
+    --bg-2: #ede6d2;
+    --bg-3: #e4dcc0;
+    --fg: #14130f;
+    --fg-dim: #6b6450;
+    --fg-faint: #b2a88a;
+    --accent: #b3351a;
+    --accent-2: #8a5a10;
+    --danger: #7a1414;
+    --rule: #c9bf9d;
+    --select: rgba(179,53,26,.18);
+    --grain-op: .22;
+    --scan-op: 0;
+    --vignette: 0;
+    --term-glow: none;
+    --body-glow: none;
+  }
+
+  *,*::before,*::after{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  html{background:var(--bg);scroll-behavior:smooth}
+  ::selection{background:var(--select);color:var(--fg)}
+
+  body{
+    font-family:var(--font-sans);
+    font-weight:400;
+    font-size:15px;
+    line-height:1.55;
+    color:var(--fg);
+    background:var(--bg);
+    min-height:100vh;
+    overflow-x:hidden;
+    font-feature-settings:"ss01" 1,"cv11" 1;
+    text-rendering:optimizeLegibility;
+    -webkit-font-smoothing:antialiased;
+    transition:color .4s ease,background .4s ease;
+  }
+
+  /* ---------- CRT / paper overlay stack ---------- */
+  .fx{
+    position:fixed;inset:0;pointer-events:none;z-index:50;
+    mix-blend-mode:multiply;
+  }
+  .fx.scanlines{
+    background:repeating-linear-gradient(
+      to bottom,
+      rgba(0,0,0,.0) 0px,
+      rgba(0,0,0,.0) 2px,
+      rgba(0,0,0,.55) 3px,
+      rgba(0,0,0,.0) 4px
+    );
+    opacity:var(--scan-op);
+    mix-blend-mode:multiply;
+  }
+  .fx.vignette{
+    background:radial-gradient(ellipse at center,transparent 45%,rgba(0,0,0,.85) 110%);
+    mix-blend-mode:multiply;
+    opacity:1;
+  }
+  :root[data-theme="light"] .fx.vignette{display:none}
+  .fx.grain{
+    opacity:var(--grain-op);
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='matrix' values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .9 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+    mix-blend-mode:multiply;
+  }
+  :root[data-theme="light"] .fx.grain{mix-blend-mode:multiply;opacity:.3}
+
+  /* gentle CRT flicker — dark mode only */
+  :root[data-theme="dark"] .fx.vignette{
+    animation:flicker 7s infinite steps(1);
+  }
+  @keyframes flicker{
+    0%,96%,100%{opacity:1}
+    96.5%{opacity:.92}
+    97%{opacity:1.04}
+    97.5%{opacity:.96}
+  }
+  @media (prefers-reduced-motion:reduce){
+    :root[data-theme="dark"] .fx.vignette{animation:none}
+  }
+
+  /* tractor-feed holes on light mode */
+  :root[data-theme="light"] .page::before,
+  :root[data-theme="light"] .page::after{
+    content:"";
+    position:fixed;top:0;bottom:0;width:34px;
+    background-image:radial-gradient(circle at 50% 22px,var(--bg-3) 5px,transparent 6px);
+    background-size:34px 44px;
+    background-repeat:repeat-y;
+    z-index:2;pointer-events:none;
+  }
+  :root[data-theme="light"] .page::before{left:0;border-right:1px dashed var(--fg-faint)}
+  :root[data-theme="light"] .page::after{right:0;border-left:1px dashed var(--fg-faint)}
+
+  /* ---------- layout ---------- */
+  .page{
+    position:relative;
+    max-width:1240px;
+    margin:0 auto;
+    padding:28px clamp(28px,5vw,80px) 80px;
+    z-index:3;
+  }
+
+  /* theme toggle — lives inside term-bar */
+  .theme-toggle{
+    font:inherit;font-size:11px;
+    color:var(--fg);background:transparent;
+    border:1px solid var(--rule);
+    padding:4px 10px;cursor:pointer;
+    letter-spacing:.08em;
+    text-transform:lowercase;
+    transition:background .2s,border-color .2s,color .2s;
+  }
+  .theme-toggle:hover{background:var(--bg-2);border-color:var(--accent);color:var(--accent)}
+  .theme-toggle .k{color:var(--accent)}
+
+  .caret{
+    display:inline-block;width:.55ch;height:.8em;
+    background:var(--accent);
+    margin-left:.1ch;
+    vertical-align:-.1em;
+    animation:blink 1.1s steps(1) infinite;
+    box-shadow:0 0 12px var(--accent);
+  }
+  :root[data-theme="light"] .caret{box-shadow:none}
+  @keyframes blink{50%{opacity:0}}
+  @keyframes fadein{to{opacity:1}}
+
+  /* ---------- hero shell ---------- */
+  .hero-shell{margin-bottom:20px}
+
+  /* ---------- section header ---------- */
+  section{padding:84px 0 20px}
+  .hero-shell{padding:30px 0 20px}
+  .sec-head{
+    display:grid;
+    grid-template-columns:auto auto 1fr auto;
+    gap:18px;align-items:baseline;
+    font-family:var(--font-sans);
+    font-size:11px;color:var(--fg-dim);
+    text-transform:uppercase;letter-spacing:.18em;
+    margin-bottom:32px;
+    font-weight:500;
+  }
+  .sec-head .num{
+    color:var(--fg-dim);
+    font-family:var(--font-mono);
+    font-size:11px;letter-spacing:0;
+    font-weight:400;
+    font-feature-settings:"tnum" 1;
+  }
+  .sec-head .rule{height:1px;background:var(--rule);align-self:center;margin-top:2px}
+  .sec-head .tag{color:var(--fg);font-weight:500}
+
+  /* ---------- projects directory ---------- */
+  .dir{
+    border-top:1px solid var(--rule);
+  }
+  .dir .head{
+    display:none;
+  }
+  .row-proj{
+    display:grid;
+    grid-template-columns:24px 1fr auto auto;
+    gap:28px;
+    padding:28px 4px;
+    align-items:baseline;
+    border-bottom:1px solid var(--rule);
+    text-decoration:none;color:var(--fg);
+    position:relative;
+    transition:padding .25s cubic-bezier(.2,.7,.2,1);
+  }
+  .row-proj .idx{
+    font-family:var(--font-mono);
+    font-size:11px;
+    color:var(--fg-faint);
+    font-feature-settings:"tnum" 1;
+    align-self:center;
+  }
+  .row-proj .col-main{display:block;min-width:0}
+  .row-proj .name{
+    display:block;
+    font-family:var(--font-sans);
+    font-size:clamp(22px,3.4vw,38px);
+    font-weight:500;
+    line-height:1.02;
+    letter-spacing:-.018em;
+    color:var(--fg);
+  }
+  .row-proj .desc{
+    display:block;
+    font-size:14px;
+    color:var(--fg-dim);
+    font-weight:400;
+    margin-top:8px;
+    letter-spacing:-.005em;
+    max-width:58ch;
+  }
+  .row-proj .yr{
+    font-family:var(--font-mono);
+    font-size:12px;
+    color:var(--fg-dim);
+    font-feature-settings:"tnum" 1;
+    align-self:center;
+  }
+  .row-proj .tech{
+    font-family:var(--font-mono);
+    font-size:11px;
+    color:var(--fg-dim);
+    text-transform:lowercase;
+    letter-spacing:.02em;
+    align-self:center;
+    padding-left:24px;
+    border-left:1px solid var(--rule);
+    margin-left:4px;
+    min-width:140px;
+  }
+  .row-proj .arrow{
+    display:none;
+  }
+  .row-proj:hover{padding-left:14px}
+  .row-proj:hover .name{color:var(--accent)}
+  .row-proj:hover .idx{color:var(--accent)}
+
+  /* private (non-clickable) variant */
+  .row-proj.is-private{cursor:default}
+  .row-proj.is-private:hover{padding-left:4px}
+  .row-proj.is-private:hover .name,
+  .row-proj.is-private:hover .idx{color:inherit}
+  .row-proj.is-private .name{color:var(--fg-dim)}
+
+  .row-tag{
+    display:inline-block;
+    margin-left:14px;
+    padding:3px 9px;
+    font-family:var(--font-mono);
+    font-size:10px;
+    font-weight:400;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    color:var(--fg-faint);
+    border:1px solid var(--rule);
+    vertical-align:middle;
+    line-height:1.2;
+    transform:translateY(-.32em);
+  }
+
+  .row-ghost{
+    display:block;padding:28px 4px;
+    font-family:var(--font-mono);
+    font-size:11px;color:var(--fg-faint);
+    letter-spacing:.02em;
+  }
+
+  /* ---------- about / stats grid ---------- */
+  .about{
+    display:grid;
+    grid-template-columns:1.6fr 1fr;
+    gap:80px;
+    align-items:start;
+  }
+  .about .prose{
+    font-family:var(--font-sans);
+    font-size:17px;
+    line-height:1.6;
+    max-width:54ch;
+    color:var(--fg);
+    letter-spacing:-.01em;
+  }
+  .about .prose p{margin:0 0 1.1em}
+  .about .prose p:last-child{margin-bottom:0}
+  .about .prose a{
+    color:var(--fg);text-decoration:none;
+    background-image:linear-gradient(var(--accent),var(--accent));
+    background-size:100% 1px;
+    background-position:0 100%;
+    background-repeat:no-repeat;
+    padding-bottom:1px;
+    transition:background-size .2s;
+  }
+  .about .prose a:hover{color:var(--accent)}
+  .about .prose em{
+    font-style:normal;
+    color:var(--fg-dim);
+  }
+
+  .about-meta{
+    font-family:var(--font-mono);
+    font-size:11px;
+    color:var(--fg-dim);
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+    padding-top:6px;
+  }
+  .about-meta .am-row{
+    display:grid;
+    grid-template-columns:42px 1fr;
+    gap:16px;
+    align-items:baseline;
+    padding-bottom:12px;
+    border-bottom:1px solid var(--rule);
+  }
+  .about-meta .am-row:last-child{border-bottom:0;padding-bottom:0}
+  .about-meta .am-k{
+    color:var(--fg-faint);
+    text-transform:uppercase;
+    letter-spacing:.14em;
+  }
+  .about-meta .am-v{
+    color:var(--fg);
+    letter-spacing:.01em;
+  }
+
+  /* ---------- contact ---------- */
+  .contact{
+    margin-top:40px;
+    padding:0;
+    border:0;
+    background:transparent;
+  }
+  .contact ul{
+    list-style:none;padding:0;margin:0;
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:0;
+    border-top:1px solid var(--rule);
+  }
+  .contact ul li{
+    margin:0;
+    padding:22px 0;
+    border-bottom:1px solid var(--rule);
+    display:flex;align-items:baseline;gap:18px;
+  }
+  .contact a{
+    font-family:var(--font-sans);
+    font-size:17px;
+    font-weight:500;
+    color:var(--fg);
+    text-decoration:none;
+    letter-spacing:-.01em;
+    transition:color .2s,transform .2s;
+    display:inline-flex;align-items:baseline;gap:10px;
+  }
+  .contact a::after{
+    content:"→";
+    font-family:var(--font-mono);
+    color:var(--fg-faint);
+    transition:transform .2s,color .2s;
+  }
+  .contact a:hover{color:var(--accent)}
+  .contact a:hover::after{transform:translate(4px,-2px) rotate(-45deg);color:var(--accent)}
+  .contact ul li .k{
+    font-family:var(--font-mono);
+    color:var(--fg-faint);
+    text-transform:uppercase;letter-spacing:.18em;
+    font-size:10px;
+    display:inline-block;min-width:2.5em;
+  }
+  .contact .placeholder{
+    color:var(--fg-faint);
+    font-style:italic;
+    font-weight:400;
+  }
+
+  /* ---------- terminal (the hero, as a CRT) ---------- */
+  .term{
+    font-family:var(--font-mono);
+    border:1px solid var(--rule);
+    background:var(--bg-2);
+    font-size:13.5px;
+    position:relative;
+    display:flex;flex-direction:column;
+    min-height:min(620px,76vh);
+    border-radius:30px / 46px;  /* elliptical: more curve top/bottom than sides */
+    overflow:hidden;
+    box-shadow:
+      0 0 0 1px var(--rule),
+      0 50px 120px -40px rgba(0,0,0,.85),
+      0 0 0 6px rgba(0,0,0,.35);
+    text-shadow:var(--term-glow);
+    isolation:isolate;
+  }
+  /* inner curvature shadow — the "bulge" of the glass */
+  .term::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    border-radius:inherit;
+    pointer-events:none;
+    z-index:5;
+    box-shadow:
+      inset 0 0 90px 10px rgba(0,0,0,.55),
+      inset 0 0 240px 60px rgba(0,0,0,.35);
+  }
+  /* faint top "glass" highlight — the screen reflection */
+  .term::after{
+    content:"";
+    position:absolute;
+    left:6%;right:6%;top:0;
+    height:38%;
+    border-radius:50% / 60%;
+    background:radial-gradient(ellipse at 50% 0%,
+      rgba(255,255,255,.05) 0%,
+      rgba(255,255,255,.018) 35%,
+      transparent 70%);
+    pointer-events:none;
+    z-index:6;
+  }
+  :root[data-theme="light"] .term{
+    border-radius:14px / 18px;
+    box-shadow:
+      0 0 0 1px var(--rule),
+      6px 6px 0 0 var(--bg-3),
+      7px 7px 0 1px var(--rule);
+  }
+  :root[data-theme="light"] .term::before{display:none}
+  :root[data-theme="light"] .term::after{display:none}
+
+  /* window chrome bar */
+  .term-bar{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    padding:11px 18px;
+    background:var(--bg-3);
+    border-bottom:1px solid var(--rule);
+    font-size:11px;
+    color:var(--fg-dim);
+    text-transform:uppercase;
+    letter-spacing:.16em;
+    flex-wrap:wrap;
+  }
+  .tb-dots{display:inline-flex;gap:6px;margin-right:4px}
+  .tb-dots i{
+    width:10px;height:10px;border-radius:50%;
+    display:inline-block;
+    background:var(--fg-faint);
+    border:1px solid var(--rule);
+  }
+  .tb-dots i:first-child{background:var(--danger)}
+  .tb-dots i:nth-child(2){background:var(--accent-2)}
+  .tb-dots i:nth-child(3){background:var(--accent);box-shadow:0 0 6px var(--accent);animation:pulse 2.2s ease-in-out infinite}
+  :root[data-theme="dark"] .tb-dots i:first-child{box-shadow:0 0 6px rgba(255,96,96,.5)}
+  :root[data-theme="light"] .tb-dots i{border-radius:0;box-shadow:none;animation:none}
+  @keyframes pulse{50%{opacity:.45}}
+  .tb-title{color:var(--fg);letter-spacing:.14em}
+  .tb-sep{color:var(--fg-faint);user-select:none}
+  .tb-cell{white-space:nowrap}
+  .tb-cell b{color:var(--fg);font-weight:500;font-variant-numeric:tabular-nums}
+  .tb-spacer{flex:1;min-width:8px}
+
+
+  .term-out{
+    padding:26px 28px 14px;
+    flex:1;
+    overflow-y:auto;
+    scrollbar-width:thin;
+    scrollbar-color:var(--fg-faint) transparent;
+  }
+  .term-out::-webkit-scrollbar{width:8px}
+  .term-out::-webkit-scrollbar-thumb{background:var(--fg-faint)}
+  .term-out::-webkit-scrollbar-track{background:transparent}
+  .out-line{margin:0 0 4px;white-space:pre-wrap;word-break:break-word}
+  .out-line.dim,.out-line .dim{color:var(--fg-dim)}
+  .out-line .a{color:var(--accent)}
+  .out-line .ok{color:var(--accent)}
+  .out-line .err{color:var(--danger)}
+  .out-line .cmd{color:var(--fg)}
+  .out-line .prompt{color:var(--fg-dim)}
+  .out-line .faint,.faint-line .faint{color:var(--fg-faint)}
+  .out-line.ghost{color:var(--fg-faint)}
+
+  /* ASCII wordmark */
+  .ascii{
+    font-family:var(--font-mono);
+    font-size:clamp(9px,1.25vw,15px);
+    line-height:1.1;
+    margin:12px 0 6px;
+    color:var(--accent);
+    white-space:pre;
+    letter-spacing:0;
+    text-shadow:
+      0 0 .35em rgba(125,255,156,.25);
+    overflow-x:auto;
+  }
+  :root[data-theme="light"] .ascii{text-shadow:none}
+
+  .term-in{
+    display:flex;align-items:center;gap:10px;
+    padding:14px 28px 18px;
+    border-top:1px dashed var(--rule);
+    background:var(--bg-3);
+  }
+  .prompt{
+    color:var(--fg-dim);font-size:14px;white-space:nowrap;
+  }
+  .prompt .p-sep{color:var(--fg-faint)}
+  .prompt .p-path{color:var(--accent)}
+  .prompt .p-dollar{color:var(--fg-dim);margin-left:4px}
+  .term-in input{
+    flex:1;background:transparent;border:0;outline:0;
+    color:var(--fg);
+    font:inherit;font-family:var(--font-mono);
+    padding:2px 0;caret-color:transparent;
+  }
+  .term-caret{
+    margin-left:-4px;
+    animation:blink 1.1s steps(1) infinite;
+  }
+  .term.focus .term-caret{background:var(--accent)}
+  .term:not(.focus) .term-caret{background:var(--fg-dim);box-shadow:none}
+
+  kbd{
+    font:inherit;font-size:10px;
+    border:1px solid var(--rule);
+    padding:1px 5px;
+    color:var(--fg);
+    background:var(--bg-3);
+  }
+
+  /* project row focus state for j/k nav */
+  .row-proj.kfocus{padding-left:14px}
+  .row-proj.kfocus .name{color:var(--accent)}
+  .row-proj.kfocus .idx{color:var(--accent)}
+
+  /* ---------- scroll nudge ---------- */
+  .scroll-nudge{
+    display:inline-flex;
+    align-items:center;
+    gap:12px;
+    margin:28px 0 0 4px;
+    padding:0;
+    font-family:var(--font-mono);
+    font-size:11px;
+    color:var(--fg-faint);
+    text-transform:lowercase;
+    letter-spacing:.08em;
+    text-decoration:none;
+    opacity:0;
+    transition:color .2s,opacity .5s;
+  }
+  .scroll-nudge.in{opacity:1}
+  .scroll-nudge:hover{color:var(--fg-dim)}
+  .scroll-nudge .sn-arrow{
+    display:inline-block;
+    animation:nudge 2.4s ease-in-out infinite;
+  }
+  @keyframes nudge{
+    0%,100%{transform:translateY(0)}
+    50%{transform:translateY(4px)}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .scroll-nudge .sn-arrow{animation:none}
+  }
+
+
+  footer{
+    margin-top:60px;padding-top:26px;
+    border-top:1px solid var(--rule);
+    display:grid;grid-template-columns:1fr 1fr 1fr;
+    gap:20px;
+    font-family:var(--font-mono);
+    font-size:10px;color:var(--fg-dim);
+    text-transform:uppercase;letter-spacing:.18em;
+  }
+  footer .c{text-align:center}
+  footer .r{text-align:right}
+
+  /* ---------- responsive ---------- */
+  @media (max-width:720px){
+    .term-bar{gap:10px;padding:10px 14px;font-size:10px}
+    .tb-title{flex-basis:100%;order:-1;text-align:left}
+    .tb-dots{order:-2}
+  }
+  @media (max-width:520px){
+    .tb-cell,.tb-sep{display:none}
+    .tb-cell.tb-up{display:inline}
+  }
+  @media (max-width:860px){
+    .about{grid-template-columns:1fr;gap:56px}
+    .row-proj{
+      grid-template-columns:auto 1fr;
+      grid-template-rows:auto auto;
+      column-gap:18px;
+      row-gap:10px;
+      padding:24px 4px;
+    }
+    .row-proj .idx{grid-column:1;grid-row:1}
+    .row-proj .col-main{grid-column:2;grid-row:1}
+    .row-proj .yr,.row-proj .tech{
+      grid-column:2;grid-row:2;
+      padding-left:0;border-left:0;margin-left:0;min-width:0;
+    }
+    .row-proj .yr{padding-right:14px;border-right:1px solid var(--rule);margin-right:14px}
+    footer{grid-template-columns:1fr;gap:6px}
+    footer .c,footer .r{text-align:left}
+    .brand-mark{margin:100px 0 40px}
+    :root[data-theme="light"] .page::before,
+    :root[data-theme="light"] .page::after{display:none}
+  }
+</style>
+</head>
+<body>
+
+<div class="fx grain"></div>
+<div class="fx scanlines"></div>
+<div class="fx vignette"></div>
+
+<main class="page">
+
+  <!-- ============ HERO / SHELL ============ -->
+  <section id="shell" aria-label="jay.bee shell" class="hero-shell">
+    <div class="term" id="term">
+      <div class="term-bar">
+        <span class="tb-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span class="tb-title">jay.bee &mdash; tty0</span>
+        <span class="tb-sep" aria-hidden="true">│</span>
+        <span class="tb-cell tb-up">up <b id="uptime">00:00:00</b></span>
+        <span class="tb-sep" aria-hidden="true">│</span>
+        <span class="tb-cell">westeurope</span>
+        <span class="tb-spacer"></span>
+        <button class="theme-toggle" id="themeBtn" aria-label="toggle theme">
+          <span class="k">$</span>&nbsp;theme&nbsp;--<span id="themeLabel">light</span>
+        </button>
+      </div>
+      <div class="term-out" id="termOut"></div>
+      <form class="term-in" id="termForm" autocomplete="off">
+        <span class="prompt">jay.bee<span class="p-sep">:</span><span class="p-path">~</span><span class="p-dollar">$</span></span>
+        <input id="termInput" type="text" spellcheck="false" autocapitalize="off" autocorrect="off" aria-label="shell input">
+        <span class="caret term-caret"></span>
+      </form>
+    </div>
+
+    <a href="#projects" class="scroll-nudge" id="scrollNudge" aria-label="scroll for projects, bio, contact">
+      <span class="sn-label">projects, bio, contact</span>
+      <span class="sn-arrow" aria-hidden="true">&darr;</span>
+    </a>
+  </section>
+
+  <!-- ============ PROJECTS ============ -->
+  <section id="projects">
+    <div class="sec-head">
+      <span class="num">01</span>
+      <span class="tag">projects</span>
+      <span class="rule"></span>
+      <span>most live elsewhere</span>
+    </div>
+
+    <div class="dir">
+      <div class="row-proj is-private" data-idx="1">
+        <span class="idx">01</span>
+        <span class="col-main">
+          <span class="name">wordle leaderboard <span class="row-tag">private</span></span>
+          <span class="desc">a small members-only league for a fixed group. closed registration.</span>
+        </span>
+        <span class="yr">2024</span>
+        <span class="tech">.net &middot; blazor</span>
+      </div>
+
+      <div class="row-ghost">
+        <span>&mdash; more, eventually.</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ABOUT ============ -->
+  <section id="about">
+    <div class="sec-head">
+      <span class="num">02</span>
+      <span class="tag">// cat about.md</span>
+      <span class="rule"></span>
+      <span>~/bio</span>
+    </div>
+
+    <div class="about">
+      <div class="prose">
+        <p>
+          Builds things. Web apps, tools, services, the occasional
+          game &mdash; <em>C# and .NET</em> for most of it. Yes, on
+          purpose.
+        </p>
+        <p>
+          Stays for the puzzle. Most experiments get scrapped; the
+          ones that don&rsquo;t end up here, eventually.
+        </p>
+        <p>
+          Somewhere in Scotland. Mostly indoors.
+        </p>
+      </div>
+
+      <aside class="about-meta" aria-hidden="true">
+        <div class="am-row"><span class="am-k">loc</span><span class="am-v">scotland</span></div>
+        <div class="am-row"><span class="am-k">env</span><span class="am-v">c# &middot; .net</span></div>
+        <div class="am-row"><span class="am-k">host</span><span class="am-v">azure &middot; westeurope</span></div>
+        <div class="am-row"><span class="am-k">pace</span><span class="am-v">glacial</span></div>
+      </aside>
+    </div>
+
+    <div class="contact">
+      <ul>
+        <li>
+          <span class="k">github</span>
+          <a href="https://github.com/jonnybowen" target="_blank" rel="noopener">github.com/jonnybowen</a>
+        </li>
+        <li>
+          <span class="k">bsky</span>
+          <a href="https://bsky.app/profile/creamchief.bsky.social" target="_blank" rel="noopener">@creamchief</a>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+
+  <footer>
+    <div class="l">jay.bee &middot; <span id="yr"></span></div>
+    <div class="c">azure &middot; westeurope</div>
+    <div class="r">v4.06</div>
+  </footer>
+
+</main>
+
+<script>
+  // ---------- theme toggle ----------
+  const root = document.documentElement;
+  const btn = document.getElementById("themeBtn");
+  const lbl = document.getElementById("themeLabel");
+  const stored = localStorage.getItem("theme");
+  if (stored) root.setAttribute("data-theme", stored);
+  const sync = () => {
+    const cur = root.getAttribute("data-theme");
+    lbl.textContent = cur === "dark" ? "light" : "dark";
+  };
+  sync();
+  btn.addEventListener("click", () => {
+    const cur = root.getAttribute("data-theme");
+    const next = cur === "dark" ? "light" : "dark";
+    root.setAttribute("data-theme", next);
+    localStorage.setItem("theme", next);
+    sync();
+  });
+
+  // ---------- uptime ticker ----------
+  const t0 = Date.now();
+  const el = document.getElementById("uptime");
+  const pad = n => String(n).padStart(2, "0");
+  setInterval(() => {
+    const s = Math.floor((Date.now() - t0) / 1000);
+    el.textContent = `${pad(Math.floor(s/3600))}:${pad(Math.floor(s/60)%60)}:${pad(s%60)}`;
+  }, 1000);
+
+  // ---------- year ----------
+  document.getElementById("yr").textContent = new Date().getFullYear();
+
+  // ---------- shell ----------
+  const term = document.getElementById("term");
+  const out = document.getElementById("termOut");
+  const input = document.getElementById("termInput");
+  const form = document.getElementById("termForm");
+  const projects = Array.from(document.querySelectorAll(".row-proj"));
+
+  // ---------- boot sequence (typed) ----------
+  const ASCII_ART = `   *._\\|/_.*       _                   _
+   |  o o  |      (_) __ _ _   _      | |__   ___  ___
+  /| [>_>] |\\     | |/ _\` | | | |     | '_ \\ / _ \\/ _ \\
+  \\|=======|/     | | (_| | |_| |  _  | |_) |  __/  __/
+   |=======|     _/ |\\__,_|\\__, | (_) |_.__/ \\___|\\___|
+      \\V/       |__/       |___/                         `;
+
+  const BOOT_LINES = [
+    { html: `<span class="dim">$</span> <span class="cmd">./boot</span>`, speed: 24 },
+    { html: `[<span class="ok">  ok  </span>] kernel    <span class="dim">4.06</span>`, speed: 8 },
+    { html: `[<span class="ok">  ok  </span>] mount     <span class="dim">/projects</span>`, speed: 8 },
+    { html: `[<span class="ok">  ok  </span>] region    <span class="dim">westeurope</span>`, speed: 8 },
+    { html: `[<span class="ok">  ok  </span>] display   <span class="dim">ready</span>`, speed: 8 },
+    { html: `[<span class="ok">  ok  </span>] input     <span class="dim">tty0</span>`, speed: 8 },
+    { blank: true },
+    { ascii: true },
+    { blank: true },
+    { html: `<span class="dim">jay.bee &mdash; small things, built quietly, somewhere in scotland.</span>`, speed: 4 },
+    { html: `<span class="dim">type</span> <span class="a">help</span> <span class="dim">to begin &middot;</span> <span class="a">ls</span> <span class="dim">for projects &middot;</span> <span class="a">motd</span> <span class="dim">to reprint this</span>`, speed: 4 },
+    { html: `<span class="faint">keys: <kbd>/</kbd> focus &nbsp; <kbd>t</kbd> theme &nbsp; <kbd>j</kbd>/<kbd>k</kbd> walk &nbsp; <kbd>enter</kbd> open</span>`, speed: 3 },
+  ];
+
+  const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let skipBoot = reducedMotion;
+  const bootSkipper = () => { skipBoot = true; };
+  window.addEventListener("keydown", bootSkipper);
+  window.addEventListener("pointerdown", bootSkipper);
+
+  const wait = (ms) =>
+    new Promise((r) => (skipBoot ? r() : setTimeout(r, ms)));
+
+  // Type an HTML string char-by-char into a freshly appended line.
+  async function typeLine(htmlStr, speed) {
+    const line = document.createElement("div");
+    line.className = "out-line";
+    out.appendChild(line);
+
+    if (skipBoot) {
+      line.innerHTML = htmlStr;
+      out.scrollTop = out.scrollHeight;
+      return;
+    }
+
+    const tmp = document.createElement("div");
+    tmp.innerHTML = htmlStr;
+    await buildNode(line, tmp, speed);
+    out.scrollTop = out.scrollHeight;
+  }
+
+  async function buildNode(target, source, speed) {
+    for (const child of Array.from(source.childNodes)) {
+      if (skipBoot) {
+        target.appendChild(child.cloneNode(true));
+        continue;
+      }
+      if (child.nodeType === Node.TEXT_NODE) {
+        const text = child.textContent;
+        const tnode = document.createTextNode("");
+        target.appendChild(tnode);
+        for (const ch of text) {
+          tnode.textContent += ch;
+          if (skipBoot) {
+            tnode.textContent = text;
+            break;
+          }
+          await wait(speed);
+        }
+      } else if (child.nodeType === Node.ELEMENT_NODE) {
+        const clone = child.cloneNode(false);
+        target.appendChild(clone);
+        await buildNode(clone, child, speed);
+      }
+    }
+  }
+
+  function appendBlank() {
+    const d = document.createElement("div");
+    d.className = "out-line";
+    d.innerHTML = "&nbsp;";
+    out.appendChild(d);
+  }
+
+  async function revealAscii() {
+    const pre = document.createElement("pre");
+    pre.className = "ascii";
+    pre.textContent = ASCII_ART;
+    pre.style.opacity = "0";
+    pre.style.transition = "opacity .55s ease";
+    out.appendChild(pre);
+    // allow layout, then fade in
+    await wait(20);
+    pre.style.opacity = "1";
+    if (!skipBoot) await wait(500);
+  }
+
+  async function runBoot() {
+    for (const line of BOOT_LINES) {
+      if (line.blank) {
+        appendBlank();
+        await wait(60);
+      } else if (line.ascii) {
+        await revealAscii();
+      } else {
+        await typeLine(line.html, line.speed);
+        await wait(skipBoot ? 0 : 90);
+      }
+    }
+    window.removeEventListener("keydown", bootSkipper);
+    window.removeEventListener("pointerdown", bootSkipper);
+    // reveal the scroll nudge after the boot settles
+    const nudge = document.getElementById("scrollNudge");
+    if (nudge) nudge.classList.add("in");
+    term.classList.add("booted");
+  }
+
+  // hide the input form until boot completes, then fade it in
+  form.style.opacity = "0";
+  form.style.transition = "opacity .4s ease";
+  runBoot().then(() => {
+    form.style.opacity = "1";
+  });
+
+  const print = (html, cls = "") => {
+    const d = document.createElement("div");
+    d.className = "out-line " + cls;
+    d.innerHTML = html;
+    out.appendChild(d);
+    out.scrollTop = out.scrollHeight;
+  };
+  const echo = (cmd) =>
+    print(`<span class="prompt">$</span> <span class="cmd">${esc(cmd)}</span>`);
+  const esc = (s) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+  // project data — single source of truth for ls / open / cat
+  const PROJECT_DATA = {
+    wordle_leaderboard: {
+      idx: 1,
+      year: "2024",
+      stack: ".net · blazor",
+      role: "solo",
+      status: "private",
+      blurb: "a small members-only league for a fixed group. closed registration.",
+      url: null,
+    },
+  };
+
+  const commands = {
+    help() {
+      print("available:");
+      [
+        ["help",       "this"],
+        ["ls",         "list projects"],
+        ["open <n>",   "open project n in a new tab"],
+        ["cat <name>", "print project details"],
+        ["motd",       "reprint the banner"],
+        ["about",      "scroll to about"],
+        ["contact",    "scroll to contact"],
+        ["theme",      "toggle theme"],
+        ["whoami",     "who is this"],
+        ["uptime",     "session uptime"],
+        ["clear",      "clear output"],
+        ["sudo",       "no."],
+      ].forEach(([k, v]) =>
+        print(`  <span class="a">${k.padEnd(12, " ")}</span> <span class="dim">${v}</span>`)
+      );
+    },
+    motd() {
+      const pre = document.createElement("pre");
+      pre.className = "ascii";
+      pre.textContent = ASCII_ART;
+      out.appendChild(pre);
+      print(`<span class="dim">jay.bee &mdash; small things, built quietly, somewhere in scotland.</span>`);
+      print(`<span class="dim">type</span> <span class="a">help</span> <span class="dim">for commands.</span>`);
+      out.scrollTop = out.scrollHeight;
+    },
+    cat(arg) {
+      if (!arg) {
+        const example = Object.keys(PROJECT_DATA)[0] || "<name>";
+        print(`cat: missing file. try <span class="a">cat ${example}</span>.`, "dim");
+        return;
+      }
+      const key = arg.replace(/\/$/, "").toLowerCase();
+      // allow `cat 1` as shortcut
+      const byIdx = Object.entries(PROJECT_DATA).find(([, p]) => String(p.idx) === key);
+      const data = PROJECT_DATA[key] || (byIdx && byIdx[1]);
+      const name = PROJECT_DATA[key] ? key : byIdx && byIdx[0];
+      if (!data) {
+        print(`cat: ${esc(arg)}: no such file.`, "dim");
+        return;
+      }
+      print(`<span class="a">${name}/</span>`);
+      const pad = (k) => k.padEnd(9, " ");
+      print(`  <span class="dim">${pad("year")}</span> ${data.year}`);
+      print(`  <span class="dim">${pad("stack")}</span> ${data.stack}`);
+      print(`  <span class="dim">${pad("role")}</span> ${data.role}`);
+      print(`  <span class="dim">${pad("status")}</span> ${data.status}`);
+      if (data.url) {
+        print(`  <span class="dim">${pad("url")}</span> <a href="${data.url}" target="_blank" rel="noopener" style="color:var(--fg);border-bottom:1px dashed var(--fg-faint)">${data.url}</a>`);
+      } else {
+        print(`  <span class="dim">${pad("url")}</span> <span class="dim">&mdash; (private)</span>`);
+      }
+      print("");
+      print(`  ${data.blurb}`);
+    },
+    ls() {
+      const entries = Object.entries(PROJECT_DATA);
+      entries.forEach(([key, p]) => {
+        const tag = p.url ? "" : ` <span class="dim">[private]</span>`;
+        print(`  <span class="a">${p.idx}</span>  ${key.padEnd(22)} <span class="dim">${p.year}  ${p.stack}</span>${tag}`);
+      });
+      print(`  <span class="dim">${entries.length} ${entries.length === 1 ? "entry" : "entries"}.</span>`, "dim");
+    },
+    open(arg) {
+      const i = parseInt(arg, 10);
+      const data = Object.values(PROJECT_DATA).find((p) => p.idx === i);
+      if (!data) {
+        print(`open: project "${esc(arg || "?")}" not found. try <span class="a">ls</span>.`, "dim");
+        return;
+      }
+      if (!data.url) {
+        print(`open: project ${i} is <span class="a">private</span>. nothing to open.`, "dim");
+        return;
+      }
+      print(`opening project ${i}…`, "dim");
+      window.open(data.url, "_blank", "noopener");
+    },
+    about() {
+      print("→ ~/about", "dim");
+      document.getElementById("about").scrollIntoView({ behavior: "smooth" });
+    },
+    contact() {
+      print("→ ~/contact", "dim");
+      document.querySelector(".contact").scrollIntoView({ behavior: "smooth", block: "center" });
+    },
+    projects() { commands.ls(); },
+    theme() {
+      btn.click();
+      print(`theme → ${root.getAttribute("data-theme")}`, "dim");
+    },
+    whoami() {
+      print("someone in scotland. builds small things. tries to finish them.");
+    },
+    uptime() {
+      print(document.getElementById("uptime").textContent);
+    },
+    clear() { out.innerHTML = ""; },
+    cls() { commands.clear(); },
+    sudo() { print("nice try.", "dim"); },
+    exit() { print("you can't leave. this is a website.", "dim"); },
+    "": () => {},
+  };
+
+  const history = [];
+  let hIdx = -1;
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const raw = input.value.trim();
+    echo(raw);
+    if (raw) {
+      history.push(raw);
+      hIdx = history.length;
+    }
+    const [cmd, ...rest] = raw.split(/\s+/);
+    const fn = commands[cmd.toLowerCase()];
+    if (raw === "") {
+      /* noop */
+    } else if (fn) {
+      fn(rest.join(" "));
+    } else {
+      print(`${esc(cmd)}: command not found. try <span class="a">help</span>.`, "dim");
+    }
+    input.value = "";
+  });
+
+  input.addEventListener("focus", () => term.classList.add("focus"));
+  input.addEventListener("blur", () => term.classList.remove("focus"));
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "ArrowUp") {
+      if (hIdx > 0) hIdx--;
+      input.value = history[hIdx] || "";
+      e.preventDefault();
+    } else if (e.key === "ArrowDown") {
+      if (hIdx < history.length - 1) {
+        hIdx++;
+        input.value = history[hIdx];
+      } else {
+        hIdx = history.length;
+        input.value = "";
+      }
+      e.preventDefault();
+    } else if (e.key === "Tab") {
+      e.preventDefault();
+      const v = input.value.toLowerCase();
+      const match = Object.keys(commands).filter((k) => k && k.startsWith(v));
+      if (match.length === 1) input.value = match[0];
+      else if (match.length > 1) print(`  ${match.join("  ")}`, "dim");
+    } else if (e.key === "Escape") {
+      input.blur();
+    }
+  });
+
+  // click anywhere in the term body to focus input
+  term.addEventListener("click", () => input.focus());
+
+  // ---------- global keyboard shortcuts ----------
+  let kfocus = -1;
+  const setKFocus = (i) => {
+    projects.forEach((p) => p.classList.remove("kfocus"));
+    if (i >= 0 && projects[i]) {
+      projects[i].classList.add("kfocus");
+      projects[i].scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+    kfocus = i;
+  };
+
+  document.addEventListener("keydown", (e) => {
+    const typing = document.activeElement === input;
+    if (typing) return;
+    if (e.key === "/") {
+      e.preventDefault();
+      document.getElementById("shell").scrollIntoView({ behavior: "smooth", block: "center" });
+      setTimeout(() => input.focus(), 300);
+    } else if (e.key === "t") {
+      btn.click();
+    } else if (e.key === "j") {
+      setKFocus(Math.min(projects.length - 1, kfocus + 1));
+    } else if (e.key === "k") {
+      setKFocus(Math.max(0, kfocus - 1));
+    } else if (e.key === "Enter" && kfocus >= 0) {
+      const row = projects[kfocus];
+      if (row && row.tagName === "A" && row.href) {
+        window.open(row.href, "_blank", "noopener");
+      }
+    } else if (e.key === "Escape") {
+      setKFocus(-1);
+    } else if (e.key === "`") {
+      document.body.animate(
+        [
+          { filter: "hue-rotate(0) contrast(1)" },
+          { filter: "hue-rotate(90deg) contrast(1.4) blur(1px)" },
+          { filter: "hue-rotate(0) contrast(1)" },
+        ],
+        { duration: 260, easing: "steps(6)" }
+      );
+    }
+  });
+</script>
+</body>
+</html>
