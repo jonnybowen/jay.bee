@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>jay.bee // game builds</title>
+<title>jay-bee // game builds</title>
 <meta name="description" content="Independent game developer. Small, strange, playable things.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -283,6 +283,7 @@
     line-height:1.2;
     transform:translateY(-.32em);
   }
+  .row-tag.is-new{color:var(--accent);border-color:var(--accent)}
 
   .row-ghost{
     display:block;padding:28px 4px;
@@ -649,11 +650,11 @@
 <main class="page">
 
   <!-- ============ HERO / SHELL ============ -->
-  <section id="shell" aria-label="jay.bee shell" class="hero-shell">
+  <section id="shell" aria-label="jay-bee shell" class="hero-shell">
     <div class="term" id="term">
       <div class="term-bar">
         <span class="tb-dots" aria-hidden="true"><i></i><i></i><i></i></span>
-        <span class="tb-title">jay.bee &mdash; tty0</span>
+        <span class="tb-title">jay-bee &mdash; tty0</span>
         <span class="tb-sep" aria-hidden="true">│</span>
         <span class="tb-cell tb-up">up <b id="uptime">00:00:00</b></span>
         <span class="tb-sep" aria-hidden="true">│</span>
@@ -665,7 +666,7 @@
       </div>
       <div class="term-out" id="termOut"></div>
       <form class="term-in" id="termForm" autocomplete="off">
-        <span class="prompt">jay.bee<span class="p-sep">:</span><span class="p-path">~</span><span class="p-dollar">$</span></span>
+        <span class="prompt">jay-bee<span class="p-sep">:</span><span class="p-path">~</span><span class="p-dollar">$</span></span>
         <input id="termInput" type="text" spellcheck="false" autocapitalize="off" autocorrect="off" aria-label="shell input">
         <span class="caret term-caret"></span>
       </form>
@@ -687,8 +688,18 @@
     </div>
 
     <div class="dir">
-      <div class="row-proj is-private" data-idx="1">
+      <a class="row-proj" href="https://linkle-game.azurewebsites.net/" target="_blank" rel="noopener" data-idx="1">
         <span class="idx">01</span>
+        <span class="col-main">
+          <span class="name">linkle <span class="row-tag is-new">new</span></span>
+          <span class="desc">word association on a live repulsion graph. nodes drift; you link them.</span>
+        </span>
+        <span class="yr">2026</span>
+        <span class="tech">flutter &middot; flame &middot; dart</span>
+      </a>
+
+      <div class="row-proj is-private" data-idx="2">
+        <span class="idx">02</span>
         <span class="col-main">
           <span class="name">wordle leaderboard <span class="row-tag">private</span></span>
           <span class="desc">a small members-only league for a fixed group. closed registration.</span>
@@ -752,7 +763,7 @@
 
 
   <footer>
-    <div class="l">jay.bee &middot; <span id="yr"></span></div>
+    <div class="l">jay-bee &middot; <span id="yr"></span></div>
     <div class="c">azure &middot; westeurope</div>
     <div class="r">v4.06</div>
   </footer>
@@ -799,12 +810,18 @@
   const projects = Array.from(document.querySelectorAll(".row-proj"));
 
   // ---------- boot sequence (typed) ----------
-  const ASCII_ART = `   *._\\|/_.*       _                   _
-   |  o o  |      (_) __ _ _   _      | |__   ___  ___
-  /| [>_>] |\\     | |/ _\` | | | |     | '_ \\ / _ \\/ _ \\
-  \\|=======|/     | | (_| | |_| |  _  | |_) |  __/  __/
-   |=======|     _/ |\\__,_|\\__, | (_) |_.__/ \\___|\\___|
-      \\V/       |__/       |___/                         `;
+  const ASCII_ART = `                                  ...vvvv)))))).
+       /~~\\               ,,,c(((((((((((((((((/
+      /~~c \\.         .vv)))))))))))))))))))\\\`\`
+          G_G__   ,,(((KKKK//////////////'
+        ,Z~__ '@,gW@@AKXX~MW,gmmmz==m_.
+       iP,dW@!,A@@@@@@@@@@@@@@@A\` ,W@@A\\c
+       ]b_.__zf !P~@@@@@*P~b.~+=m@@@*~ g@Ws.
+          ~\`    ,2W2m. '\\[ ['~~c'M7 _gW@@A\`'s
+            v=XX)====Y-  [ [    \\c/*@@@*~ g@@i
+           /v~           !.!.     '\\c7+sg@@@@@s.
+          //              'c'c       '\\c7*X7~~~~
+         ]/                 ~=Xm_       '~=(Gm_.`;
 
   const BOOT_LINES = [
     { html: `<span class="dim">$</span> <span class="cmd">./boot</span>`, speed: 24 },
@@ -816,7 +833,7 @@
     { blank: true },
     { ascii: true },
     { blank: true },
-    { html: `<span class="dim">jay.bee &mdash; small things, built quietly, somewhere in scotland.</span>`, speed: 4 },
+    { html: `<span class="dim">jay-bee &mdash; small things, built quietly, somewhere in scotland.</span>`, speed: 4 },
     { html: `<span class="dim">type</span> <span class="a">help</span> <span class="dim">to begin &middot;</span> <span class="a">ls</span> <span class="dim">for projects &middot;</span> <span class="a">motd</span> <span class="dim">to reprint this</span>`, speed: 4 },
     { html: `<span class="faint">keys: <kbd>/</kbd> focus &nbsp; <kbd>t</kbd> theme &nbsp; <kbd>j</kbd>/<kbd>k</kbd> walk &nbsp; <kbd>enter</kbd> open</span>`, speed: 3 },
   ];
@@ -934,8 +951,17 @@
 
   // project data — single source of truth for ls / open / cat
   const PROJECT_DATA = {
-    wordle_leaderboard: {
+    linkle: {
       idx: 1,
+      year: "2026",
+      stack: "flutter · flame · dart",
+      role: "solo + claude",
+      status: "live",
+      blurb: "word association on a live repulsion graph. nodes drift; you link them.",
+      url: "https://linkle-game.azurewebsites.net/",
+    },
+    wordle_leaderboard: {
+      idx: 2,
       year: "2024",
       stack: ".net · blazor",
       role: "solo",
@@ -970,7 +996,7 @@
       pre.className = "ascii";
       pre.textContent = ASCII_ART;
       out.appendChild(pre);
-      print(`<span class="dim">jay.bee &mdash; small things, built quietly, somewhere in scotland.</span>`);
+      print(`<span class="dim">jay-bee &mdash; small things, built quietly, somewhere in scotland.</span>`);
       print(`<span class="dim">type</span> <span class="a">help</span> <span class="dim">for commands.</span>`);
       out.scrollTop = out.scrollHeight;
     },
