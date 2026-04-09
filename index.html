@@ -275,11 +275,6 @@
   .row-proj:hover .idx{color:var(--accent)}
 
   /* private (non-clickable) variant */
-  .row-proj.is-private{cursor:default}
-  .row-proj.is-private:hover{padding-left:4px}
-  .row-proj.is-private:hover .name,
-  .row-proj.is-private:hover .idx{color:inherit}
-  .row-proj.is-private .name{color:var(--fg-dim)}
 
   .row-tag{
     display:inline-block;
@@ -297,6 +292,27 @@
     transform:translateY(-.32em);
   }
   .row-tag.is-new{color:var(--accent);border-color:var(--accent)}
+
+  .row-proj .idx{position:relative;padding-left:16px}
+  .live-light{
+    position:absolute;
+    left:0;
+    top:50%;
+    width:7px;
+    height:7px;
+    border-radius:50%;
+    background:#39d353;
+    box-shadow:0 0 6px rgba(57,211,83,.75),0 0 2px rgba(57,211,83,.9);
+    transform:translateY(-50%);
+    animation:live-pulse 2.8s ease-in-out infinite;
+  }
+  @keyframes live-pulse{
+    0%,100%{opacity:.85}
+    50%{opacity:1}
+  }
+  @media (prefers-reduced-motion: reduce){
+    .live-light{animation:none}
+  }
 
   .row-ghost{
     display:block;padding:28px 4px;
@@ -703,24 +719,24 @@
 
     <div class="dir">
       <a class="row-proj" href="https://linkle.cool/" target="_blank" rel="noopener" data-idx="1">
-        <span class="idx">01</span>
+        <span class="idx"><span class="live-light" aria-label="live"></span>01</span>
         <span class="col-main">
           <span class="name">linkle <span class="row-tag is-new">new</span></span>
-          <span class="desc">word association on a live repulsion graph. nodes drift; you link them.</span>
+          <span class="desc">word association game on a live repulsion graph. nodes drift; you link them.</span>
         </span>
         <span class="yr">2026</span>
         <span class="tech">flutter &middot; flame &middot; dart</span>
       </a>
 
-      <div class="row-proj is-private" data-idx="2">
-        <span class="idx">02</span>
+      <a class="row-proj" href="https://www.theledger.fyi" target="_blank" rel="noopener" data-idx="2">
+        <span class="idx"><span class="live-light" aria-label="live"></span>02</span>
         <span class="col-main">
-          <span class="name">wordle leaderboard <span class="row-tag">private</span></span>
-          <span class="desc">a small members-only league for a fixed group. closed registration.</span>
+          <span class="name">the ledger</span>
+          <span class="desc">members-only wordle league. too serious for you. closed registration. (you can check out our stats though).</span>
         </span>
         <span class="yr">2024</span>
         <span class="tech">.net &middot; blazor</span>
-      </div>
+      </a>
 
       <div class="row-ghost">
         <span>&mdash; more, eventually.</span>
@@ -981,14 +997,14 @@
       blurb: "word association on a live repulsion graph. nodes drift; you link them.",
       url: "https://linkle.cool/",
     },
-    wordle_leaderboard: {
+    the_ledger: {
       idx: 2,
       year: "2024",
       stack: ".net · blazor",
       role: "solo",
-      status: "private",
+      status: "live",
       blurb: "a small members-only league for a fixed group. closed registration.",
-      url: null,
+      url: "https://www.theledger.fyi",
     },
   };
 
